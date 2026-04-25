@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TIME BUREAU | SECURE TERMINAL</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #1aff1a;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-shadow: 0 0 5px #1aff1a;
+        }
+
+        /* CRT Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .terminal {
+            width: 80%;
+            max-width: 700px;
+            border: 2px solid #1aff1a;
+            padding: 30px;
+            background: rgba(0, 20, 0, 0.9);
+            box-shadow: 0 0 20px rgba(26, 255, 26, 0.2);
+            position: relative;
+        }
+
+        .header {
+            border-bottom: 2px solid #1aff1a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .output { margin-bottom: 20px; line-height: 1.5; }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #1aff1a;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .btn {
+            background: transparent;
+            color: #1aff1a;
+            border: 1px solid #1aff1a;
+            padding: 10px 20px;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #1aff1a;
+            color: #050505;
+            box-shadow: 0 0 15px #1aff1a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="terminal">
+    <div class="header">SYSTEM STATUS: OVERRIDE ACTIVE</div>
+    <div class="output" id="typewriter">
+        </div>
+    <a href="game.html" class="btn" id="start-btn" style="display: none;">INITIALIZE QUANTUM LINK</a>
+</div>
+
+<script>
+    const text = [
+        "> ACCESSING TIME BUREAU DATABASE...",
+        "> CRITICAL TIMELINE ANOMALIES DETECTED.",
+        "> HISTORICAL AGENTS DEPLOYED: Roosevelt, Tubman, Sun Tzu...",
+        "> MISSION: PRESERVE FUTURE BY ALTERING PAST.",
+        "> WARNING: PARADOX RISK IS EXTREME.",
+        "> READY FOR INSERTION?"
+    ];
+
+    let line = 0;
+    let charIdx = 0;
+    const output = document.getElementById('typewriter');
+
+    function type() {
+        if (line < text.length) {
+            if (charIdx < text[line].length) {
+                output.innerHTML += text[line][charIdx];
+                charIdx++;
+                setTimeout(type, 30);
+            } else {
+                output.innerHTML += "<br>";
+                line++;
+                charIdx = 0;
+                setTimeout(type, 500);
+            }
+        } else {
+            document.getElementById('start-btn').style.display = 'inline-block';
+        }
+    }
+
+    type();
+</script>
+
+</body>
+</html>
