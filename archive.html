@@ -12,15 +12,49 @@
             font-family: 'Courier New', Courier, monospace;
         } 
 
+        /* Interaction Screen */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #1aff1a;
+            cursor: pointer;
+        }
+
+        .pulse { animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
         .success-banner {
             position: absolute;
-            top: 20px; width: 100%;
+            top: 10px; width: 100%;
             text-align: center;
             color: #1aff1a;
             z-index: 100;
             text-shadow: 0 0 10px #1aff1a;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 0;
+            background: rgba(0,0,0,0.8);
+            padding: 5px 0;
+            display: none; /* Hidden until click */
+        }
+
+        .video-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            border: 4px solid #1aff1a;
+            box-shadow: 0 0 20px #1aff1a;
+            background: #000;
+            display: none; /* Hidden until click */
         }
 
         .grid-container { 
@@ -29,27 +63,13 @@
             grid-template-rows: repeat(3, 1fr); 
             height: 100vh; width: 100vw; 
             align-items: center; justify-items: center; 
+            opacity: 0.4;
+            display: none; /* Hidden until click */
         } 
 
-        .stick-man { 
-            position: relative; 
-            width: 60px; height: 120px; 
-            animation: body-bounce 0.6s infinite alternate ease-in-out; 
-        } 
-
-        /* The Hero Face */
-        .head { 
-            width: 35px; height: 35px; 
-            border: 2px solid #1aff1a;
-            border-radius: 50%; 
-            position: absolute; left: 12px; top: -10px; 
-            background-size: cover;
-            background-position: center;
-            z-index: 10;
-            animation: head-bob 0.6s infinite alternate ease-in-out; 
-            background-color: #000;
-        } 
-
+        /* Stickman Styles */
+        .stick-man { position: relative; width: 60px; height: 120px; animation: body-bounce 0.6s infinite alternate ease-in-out; } 
+        .head { width: 35px; height: 35px; border: 2px solid #1aff1a; border-radius: 50%; position: absolute; left: 12px; top: -10px; background-size: cover; background-position: center; z-index: 10; animation: head-bob 0.6s infinite alternate ease-in-out; background-color: #000; } 
         .torso { width: 2px; height: 40px; background: #1aff1a; position: absolute; left: 29px; top: 25px; } 
         .arm { width: 30px; height: 2px; background: #1aff1a; position: absolute; top: 35px; border-radius: 2px; } 
         .arm.left { left: 0px; transform-origin: right center; animation: arm-swing 0.8s infinite alternate ease-in-out; } 
@@ -62,34 +82,58 @@
         @keyframes head-bob { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } } 
         @keyframes arm-swing { 0% { transform: rotate(50deg); } 100% { transform: rotate(-70deg); } } 
         @keyframes leg-kick { 0% { transform: rotate(20deg); } 100% { transform: rotate(-40deg); } } 
-
-        .stick-man:nth-child(3n) { animation-delay: 0.1s; } 
-        .stick-man:nth-child(2n) { animation-delay: 0.2s; } 
     </style> 
 </head> 
 <body> 
-    <div class="success-banner">
-        <h1>[ MISSION ACCOMPLISHED ]</h1>
-        <p>THE HEROES OF HISTORY CELEBRATE YOUR SUCCESS.</p>
+
+    <div id="overlay" onclick="startCelebration()">
+        <h1>[ ARCHIVE UNLOCKED ]</h1>
+        <p class="pulse">CLICK ANYWHERE TO INITIALIZE VICTORY SEQUENCE</p>
     </div>
 
-    <div class="grid-container" id="stage"> 
-        <script> 
-            // Replace these URLs with your actual PNGs if you upload them to GitHub
-            const heroImages = [
-                "https://cdn.britannica.com/75/126075-050-F6CC9134/Eleanor-Roosevelt.jpg", // Eleanor Placeholder
-                "https://www.womenshistory.org/sites/default/files/styles/main_image/public/images/2024-07/Untitled%20design-123.png?itok=8VTHsGPD",    // Harriet Placeholder
-                "https://upload.wikimedia.org/wikipedia/commons/c/cf/%E5%90%B4%E5%8F%B8%E9%A9%AC%E5%AD%99%E6%AD%A6.jpg",       // Sun Tzu Placeholder
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqljTnYTEZpFtoTTd355gwlaiJjnOlwW3WxA&s",     // Marie Placeholder
-                "https://www.invent.org/sites/default/files/styles/inductee_media/public/inductees/2025-05/Tesla_B%26W%20Headshot.jpg",     // Nikola Placeholder
-                "https://www.leonardodavinci.net/assets/img/leonardo-da-vinci.jpg"      // Da Vinci Placeholder
-            ];
+    <div class="success-banner" id="banner">
+        <h1>[ MISSION ACCOMPLISHED ]</h1>
+        <p>THE BUREAU SALUTES YOUR SERVICE.</p>
+    </div>
 
+    <div class="video-container" id="video">
+        <iframe id="rick" width="420" height="236" 
+            src="" 
+            title="Victory Sequence" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <div class="grid-container" id="stage"></div> 
+
+    <script> 
+        const heroImages = [
+            "https://cdn.britannica.com/75/126075-050-F6CC9134/Eleanor-Roosevelt.jpg",
+            "https://www.womenshistory.org/sites/default/files/styles/main_image/public/images/2024-07/Untitled%20design-123.png?itok=8VTHsGPD",
+            "https://upload.wikimedia.org/wikipedia/commons/c/cf/%E5%90%B4%E5%8F%B8%E9%A9%AC%E5%AD%99%E6%AD%A6.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqljTnYTEZpFtoTTd355gwlaiJjnOlwW3WxA&s",
+            "https://www.invent.org/sites/default/files/styles/inductee_media/public/inductees/2025-05/Tesla_B%26W%20Headshot.jpg",
+            "https://www.leonardodavinci.net/assets/img/leonardo-da-vinci.jpg"
+        ];
+
+        function startCelebration() {
+            // Hide Overlay
+            document.getElementById('overlay').style.display = 'none';
+            
+            // Show Elements
+            document.getElementById('banner').style.display = 'block';
+            document.getElementById('video').style.display = 'block';
+            document.getElementById('stage').style.display = 'grid';
+
+            // Set Video Source (Triggers Autoplay after Interaction)
+            document.getElementById('rick').src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=0";
+
+            // Generate Stickmen
             const stage = document.getElementById('stage'); 
             for (let i = 0; i < 30; i++) { 
-                // Pick a random hero image for this stick man
                 const randomHero = heroImages[Math.floor(Math.random() * heroImages.length)];
-                
                 stage.innerHTML += ` 
                 <div class="stick-man"> 
                     <div class="head" style="background-image: url('${randomHero}')"></div> 
@@ -99,8 +143,8 @@
                     <div class="leg left"></div> 
                     <div class="leg right"></div> 
                 </div> `; 
-            } 
-        </script> 
-    </div> 
+            }
+        }
+    </script> 
 </body> 
 </html>
