@@ -1,0 +1,93 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>TIMELINE STABILIZED - CELEBRATION</title> 
+    <style> 
+        body, html { 
+            margin: 0; padding: 0; 
+            height: 100%; width: 100%; 
+            background-color: #050505; /* Black background to match the Bureau theme */
+            overflow: hidden; 
+            font-family: 'Courier New', Courier, monospace;
+        } 
+
+        /* Success Banner */
+        .success-banner {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #1aff1a;
+            z-index: 100;
+            text-shadow: 0 0 10px #1aff1a;
+        }
+
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(10, 1fr); 
+            grid-template-rows: repeat(3, 1fr); 
+            height: 100vh; 
+            width: 100vw; 
+            align-items: center; 
+            justify-items: center; 
+        } 
+
+        .stick-man { 
+            position: relative; 
+            width: 60px; height: 120px; 
+            animation: body-bounce 0.6s infinite alternate ease-in-out; 
+        } 
+
+        .head { 
+            width: 18px; height: 18px; 
+            border: 2px solid #1aff1a; /* Changed to green to match Bureau */
+            border-radius: 50%; 
+            position: absolute; left: 20px; top: 5px; 
+            animation: head-bob 0.6s infinite alternate ease-in-out; 
+        } 
+
+        .torso { width: 2px; height: 40px; background: #1aff1a; position: absolute; left: 29px; top: 25px; } 
+
+        .arm { width: 30px; height: 2px; background: #1aff1a; position: absolute; top: 35px; border-radius: 2px; } 
+        .arm.left { left: 0px; transform-origin: right center; animation: arm-swing 0.8s infinite alternate ease-in-out; } 
+        .arm.right { left: 31px; transform-origin: left center; animation: arm-swing 0.8s infinite alternate-reverse ease-in-out; } 
+
+        .leg { width: 2px; height: 35px; background: #1aff1a; position: absolute; top: 64px; border-radius: 2px; transform-origin: top center; } 
+        .leg.left { left: 29px; animation: leg-kick 0.6s infinite alternate ease-in-out; } 
+        .leg.right { left: 29px; animation: leg-kick 0.6s infinite alternate-reverse ease-in-out; animation-delay: 0.3s !important; } 
+
+        @keyframes body-bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } } 
+        @keyframes head-bob { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } } 
+        @keyframes arm-swing { 0% { transform: rotate(50deg); } 100% { transform: rotate(-70deg); } } 
+        @keyframes leg-kick { 0% { transform: rotate(20deg); } 100% { transform: rotate(-40deg); } } 
+
+        .stick-man:nth-child(3n) { animation-delay: 0.1s; } 
+        .stick-man:nth-child(2n) { animation-delay: 0.2s; } 
+    </style> 
+</head> 
+<body> 
+    <div class="success-banner">
+        <h1>[ MISSION ACCOMPLISHED ]</h1>
+        <p>THE TIMELINE HAS BEEN SECURED. ENJOY THE VICTORY DANCE.</p>
+    </div>
+
+    <div class="grid-container" id="stage"> 
+        <script> 
+            const stage = document.getElementById('stage'); 
+            for (let i = 0; i < 30; i++) { 
+                stage.innerHTML += ` 
+                <div class="stick-man"> 
+                    <div class="head"></div> 
+                    <div class="torso"></div> 
+                    <div class="arm left"></div> 
+                    <div class="arm right"></div> 
+                    <div class="leg left"></div> 
+                    <div class="leg right"></div> 
+                </div> `; 
+            } 
+        </script> 
+    </div> 
+</body> 
+</html>
