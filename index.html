@@ -2,122 +2,148 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TIME BUREAU | SECURE TERMINAL</title>
+    <title>TIME BUREAU | COMMAND CENTER</title>
     <style>
-        body {
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
             background-color: #050505;
             color: #1aff1a;
             font-family: 'Courier New', Courier, monospace;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-shadow: 0 0 5px #1aff1a;
+            overflow: hidden;
         }
 
-        /* CRT Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-            z-index: 10;
+        /* The Game Window */
+        #game-container {
+            flex-grow: 1;
+            border-right: 2px solid #1aff1a;
         }
 
-        .terminal {
-            width: 80%;
-            max-width: 700px;
-            border: 2px solid #1aff1a;
-            padding: 30px;
+        iframe {
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* The Persistent Sidebar */
+        #sidebar {
+            width: 300px;
             background: rgba(0, 20, 0, 0.9);
-            box-shadow: 0 0 20px rgba(26, 255, 26, 0.2);
-            position: relative;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 15px rgba(26, 255, 26, 0.1);
         }
 
-        .header {
-            border-bottom: 2px solid #1aff1a;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+        .sidebar-header {
             font-weight: bold;
-            letter-spacing: 2px;
+            border-bottom: 2px solid #1aff1a;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        .output { margin-bottom: 20px; line-height: 1.5; }
-
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 18px;
-            background: #1aff1a;
-            animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink { 50% { opacity: 0; } }
-
-        .btn {
-            background: transparent;
-            color: #1aff1a;
+        .patch-section {
+            background: rgba(26, 255, 26, 0.05);
+            padding: 15px;
             border: 1px solid #1aff1a;
-            padding: 10px 20px;
-            text-decoration: none;
-            cursor: pointer;
-            display: inline-block;
-            transition: all 0.3s;
         }
 
-        .btn:hover {
-            background: #1aff1a;
-            color: #050505;
-            box-shadow: 0 0 15px #1aff1a;
+        input {
+            background: #000;
+            border: 1px solid #1aff1a;
+            color: #1aff1a;
+            width: 90%;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Courier New', Courier, monospace;
         }
+
+        button {
+            background: #1aff1a;
+            color: #000;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #reward-box {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #00ffff; /* Cyber Blue for rewards */
+        }
+
+        .unlocked { color: #ff00ff !important; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="terminal">
-    <div class="header">SYSTEM STATUS: OVERRIDE ACTIVE</div>
-    <div class="output" id="typewriter">
+    <div id="game-container">
+        <iframe src="game.html"></iframe>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-header">AGENT HUB v1.0</div>
+        
+        <div class="patch-section">
+            <label>ENTER PATCH CODE:</label>
+            <input type="text" id="codeInput" placeholder="EX: BULL-1929">
+            <button onclick="checkCode()">SUBMIT CODE</button>
         </div>
-    <a href="game.html" class="btn" id="start-btn" style="display: none;">INITIALIZE QUANTUM LINK</a>
-</div>
+
+        <div id="reward-box">
+            <p>ACTIVE PATCHES:</p>
+            <ul id="patch-list" style="list-style: none; padding: 0;">
+                <li id="code1">????-????</li>
+                <li id="code2">????-????</li>
+                <li id="code3">????-????</li>
+                <li id="code4">????-????</li>
+                <li id="code5">????-????</li>
+                <li id="code6">????-????</li>
+            </ul>
+        </div>
+    </div>
 
 <script>
-    const text = [
-        "> ACCESSING TIME BUREAU DATABASE...",
-        "> CRITICAL TIMELINE ANOMALIES DETECTED.",
-        "> HISTORICAL AGENTS DEPLOYED: Roosevelt, Tubman, Sun Tzu...",
-        "> MISSION: PRESERVE FUTURE BY ALTERING PAST.",
-        "> WARNING: PARADOX RISK IS EXTREME.",
-        "> READY FOR INSERTION?"
-    ];
+    // These match the codes in your Twine game
+    const validCodes = {
+        "BULL-1929": "code1",
+        "FREEDOM-1863": "code2",
+        "WISDOM-1258": "code3",
+        "OZONE-1921": "code4",
+        "PLAINS-1930": "code5",
+        "SOVEREIGN-1884": "code6"
+    };
 
-    let line = 0;
-    let charIdx = 0;
-    const output = document.getElementById('typewriter');
+    let unlockedCount = 0;
 
-    function type() {
-        if (line < text.length) {
-            if (charIdx < text[line].length) {
-                output.innerHTML += text[line][charIdx];
-                charIdx++;
-                setTimeout(type, 30);
+    function checkCode() {
+        const input = document.getElementById('codeInput').value.toUpperCase();
+        const feedback = document.getElementById('patch-list');
+        
+        if (validCodes[input]) {
+            const element = document.getElementById(validCodes[input]);
+            if (!element.classList.contains('unlocked')) {
+                element.innerText = "✓ " + input;
+                element.classList.add('unlocked');
+                unlockedCount++;
+                document.getElementById('codeInput').value = "";
+                
+                // CHECK FOR CONGRATULATIONS
+                if (unlockedCount === 6) {
+                    alert("CONGRATULATIONS AGENT! TIMELINE STABILIZED. ACCESS GRANTED TO TOP SECRET ARCHIVE.");
+                    window.location.href = "archive.html"; // Takes them to your secret page!
+                }
             } else {
-                output.innerHTML += "<br>";
-                line++;
-                charIdx = 0;
-                setTimeout(type, 500);
+                alert("CODE ALREADY LOGGED.");
             }
         } else {
-            document.getElementById('start-btn').style.display = 'inline-block';
+            alert("INVALID PATCH CODE. CHECK YOUR TWINE RESULTS.");
         }
     }
-
-    type();
 </script>
 
 </body>
