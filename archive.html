@@ -2,36 +2,33 @@
 <html lang="en"> 
 <head> 
     <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>TIMELINE STABILIZED - CELEBRATION</title> 
     <style> 
         body, html { 
             margin: 0; padding: 0; 
             height: 100%; width: 100%; 
-            background-color: #050505; /* Black background to match the Bureau theme */
+            background-color: #050505; 
             overflow: hidden; 
             font-family: 'Courier New', Courier, monospace;
         } 
 
-        /* Success Banner */
         .success-banner {
             position: absolute;
-            top: 20px;
-            width: 100%;
+            top: 20px; width: 100%;
             text-align: center;
             color: #1aff1a;
             z-index: 100;
             text-shadow: 0 0 10px #1aff1a;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 0;
         }
 
         .grid-container { 
             display: grid; 
             grid-template-columns: repeat(10, 1fr); 
             grid-template-rows: repeat(3, 1fr); 
-            height: 100vh; 
-            width: 100vw; 
-            align-items: center; 
-            justify-items: center; 
+            height: 100vh; width: 100vw; 
+            align-items: center; justify-items: center; 
         } 
 
         .stick-man { 
@@ -40,26 +37,29 @@
             animation: body-bounce 0.6s infinite alternate ease-in-out; 
         } 
 
+        /* The Hero Face */
         .head { 
-            width: 18px; height: 18px; 
-            border: 2px solid #1aff1a; /* Changed to green to match Bureau */
+            width: 35px; height: 35px; 
+            border: 2px solid #1aff1a;
             border-radius: 50%; 
-            position: absolute; left: 20px; top: 5px; 
+            position: absolute; left: 12px; top: -10px; 
+            background-size: cover;
+            background-position: center;
+            z-index: 10;
             animation: head-bob 0.6s infinite alternate ease-in-out; 
+            background-color: #000;
         } 
 
         .torso { width: 2px; height: 40px; background: #1aff1a; position: absolute; left: 29px; top: 25px; } 
-
         .arm { width: 30px; height: 2px; background: #1aff1a; position: absolute; top: 35px; border-radius: 2px; } 
         .arm.left { left: 0px; transform-origin: right center; animation: arm-swing 0.8s infinite alternate ease-in-out; } 
         .arm.right { left: 31px; transform-origin: left center; animation: arm-swing 0.8s infinite alternate-reverse ease-in-out; } 
-
         .leg { width: 2px; height: 35px; background: #1aff1a; position: absolute; top: 64px; border-radius: 2px; transform-origin: top center; } 
         .leg.left { left: 29px; animation: leg-kick 0.6s infinite alternate ease-in-out; } 
         .leg.right { left: 29px; animation: leg-kick 0.6s infinite alternate-reverse ease-in-out; animation-delay: 0.3s !important; } 
 
         @keyframes body-bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } } 
-        @keyframes head-bob { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } } 
+        @keyframes head-bob { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } } 
         @keyframes arm-swing { 0% { transform: rotate(50deg); } 100% { transform: rotate(-70deg); } } 
         @keyframes leg-kick { 0% { transform: rotate(20deg); } 100% { transform: rotate(-40deg); } } 
 
@@ -70,16 +70,29 @@
 <body> 
     <div class="success-banner">
         <h1>[ MISSION ACCOMPLISHED ]</h1>
-        <p>THE TIMELINE HAS BEEN SECURED. ENJOY THE VICTORY DANCE.</p>
+        <p>THE HEROES OF HISTORY CELEBRATE YOUR SUCCESS.</p>
     </div>
 
     <div class="grid-container" id="stage"> 
         <script> 
+            // Replace these URLs with your actual PNGs if you upload them to GitHub
+            const heroImages = [
+                "https://cdn.britannica.com/75/126075-050-F6CC9134/Eleanor-Roosevelt.jpg", // Eleanor Placeholder
+                "https://www.womenshistory.org/sites/default/files/styles/main_image/public/images/2024-07/Untitled%20design-123.png?itok=8VTHsGPD",    // Harriet Placeholder
+                "https://upload.wikimedia.org/wikipedia/commons/c/cf/%E5%90%B4%E5%8F%B8%E9%A9%AC%E5%AD%99%E6%AD%A6.jpg",       // Sun Tzu Placeholder
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqljTnYTEZpFtoTTd355gwlaiJjnOlwW3WxA&s",     // Marie Placeholder
+                "https://www.invent.org/sites/default/files/styles/inductee_media/public/inductees/2025-05/Tesla_B%26W%20Headshot.jpg",     // Nikola Placeholder
+                "https://www.leonardodavinci.net/assets/img/leonardo-da-vinci.jpg"      // Da Vinci Placeholder
+            ];
+
             const stage = document.getElementById('stage'); 
             for (let i = 0; i < 30; i++) { 
+                // Pick a random hero image for this stick man
+                const randomHero = heroImages[Math.floor(Math.random() * heroImages.length)];
+                
                 stage.innerHTML += ` 
                 <div class="stick-man"> 
-                    <div class="head"></div> 
+                    <div class="head" style="background-image: url('${randomHero}')"></div> 
                     <div class="torso"></div> 
                     <div class="arm left"></div> 
                     <div class="arm right"></div> 
